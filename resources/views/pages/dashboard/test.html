@@ -1,0 +1,50 @@
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard COD Ongkir</title>
+  <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+</head>
+<body>
+  <h2>Dashboard COD Ongkir</h2>
+  <div id="chart"></div>
+
+  <script>
+    var options = {
+      chart: {
+        type: 'bar',
+        height: 400
+      },
+      series: [{
+        name: 'Jumlah Kiriman',
+        data: [4310, 1310, 1985, 1380, 4530] // Data Jumlah dari hasil summary
+      }],
+      xaxis: {
+        categories: [
+          'Butuh Dicek',
+          'Dalam Peninjauan',
+          'Dalam Proses',
+          'Dibatalkan Oleh Kamu',
+          'Proses Pengembalian Ke Kamu'
+        ]
+      },
+      tooltip: {
+        y: {
+          formatter: function (val) {
+            return val + " kiriman";
+          }
+        }
+      },
+      dataLabels: {
+        enabled: true,
+        formatter: function (val) {
+          return val + "";
+        }
+      }
+    };
+
+    var chart = new ApexCharts(document.querySelector("#chart"), options);
+    chart.render();
+  </script>
+</body>
+</html>

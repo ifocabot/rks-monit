@@ -1,9 +1,7 @@
-<x-app-layout>
-
 <div class="container">
     <h2>Upload Nomor Resi (AWB)</h2>
 
-    @if(session('success'))
+    @if (session('success'))
         <div class="alert alert-success">{{ session('success') }}</div>
     @endif
 
@@ -21,4 +19,3 @@
         <button type="submit" class="btn btn-primary">Upload</button>
     </form>
 </div>
-</x-app-layout>

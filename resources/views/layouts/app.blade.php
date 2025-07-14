@@ -1,8 +1,10 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}" data-theme="light">
+
 <head>
     @include('layouts.partials.head')
 </head>
+
 <body>
     <div class="flex h-screen">
         @include('layouts.partials.sidebar')
@@ -15,6 +17,7 @@
                 @yield('content')
             </main>
 
+
             @include('layouts.partials.footer')
         </div>
     </div>
@@ -22,4 +25,5 @@
     @include('layouts.partials.modal')
     @include('layouts.partials.scripts')
 </body>
+
 </html>

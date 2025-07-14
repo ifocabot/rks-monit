@@ -5,7 +5,7 @@
                     <!-- Logo -->
                     <div class="text-red-600 p-2 m-2 text-lg font-semibold flex justify-center items-center">
 
-                        <span class="h-[calc(theme(spacing.5))]"> Matchaneru </span>
+                        <span class="h-[calc(theme(spacing.5))]"> Matchaneru</span>
                     </div>
                     <!-- Menu Sidebar -->
                     <div class="flex flex-col gap-2 m-2 overflow-y-auto flex-1 pr-2 scrollbar-gutter-stable">
