@@ -51,7 +51,7 @@ class DispatchFetchAwbStatus extends Command
                 $this->line("🔎 Fetching ID: {$id} (Sync)");
                 (new FetchAwbStatusJob($id))->handle();
             } else {
-                FetchAwbStatusJob::dispatch($id)->delay(now()->addSeconds($delaySeconds));
+                FetchAwbStatusJob::dispatch($id); // tanpa delay
             }
 
             $dispatched++;

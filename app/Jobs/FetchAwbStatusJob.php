@@ -39,6 +39,7 @@ class FetchAwbStatusJob implements ShouldQueue
             $lastCode = $this->getLastHistoryCode($response);
             $delivered = ($lastCode === 'D01' || ($cnote['pod_status'] ?? '') === 'DELIVERED');
 
+            // Update main tracking info
             $tracking->update([
                 'status_code'     => $lastCode,
                 'status_label'    => $cnote['pod_status'] ?? null,
@@ -48,58 +49,80 @@ class FetchAwbStatusJob implements ShouldQueue
                 'pod_receiver'    => $cnote['cnote_pod_receiver'] ?? null,
             ]);
 
-            $data = [
-                'reference_number'     => $response['cnote']['reference_number'] ?? null,
-                'origin'               => $response['cnote']['cnote_origin'] ?? null,
-                'destination'          => $response['cnote']['cnote_destination'] ?? null,
-                'service_code'         => $response['cnote']['cnote_services_code'] ?? null,
-                'service_type'         => $response['cnote']['servicetype'] ?? null,
-                'cust_no'              => $response['cnote']['cnote_cust_no'] ?? null,
-                'cnote_date'           => $this->parseIsoDate($response['cnote']['cnote_date'] ?? null),
-                'goods_description'    => $response['cnote']['cnote_goods_descr'] ?? null,
-                'amount'               => $response['cnote']['cnote_amount'] ?? null,
-                'weight'               => $response['cnote']['cnote_weight'] ?? null,
-                'shipper_name'         => $response['detail'][0]['cnote_shipper_name'] ?? null,
+            // Update or Create Detail Info
+            $detailData = [
+                'reference_number'     => $cnote['reference_number'] ?? null,
+                'origin'               => $cnote['cnote_origin'] ?? null,
+                'destination'          => $cnote['cnote_destination'] ?? null,
+                'service_code'         => $cnote['cnote_services_code'] ?? null,
+                'service_type'         => $cnote['servicetype'] ?? null,
+                'cust_no'              => $cnote['cnote_cust_no'] ?? null,
+                'cnote_date'           => $this->parseIsoDate($cnote['cnote_date'] ?? null),
+                'goods_description'    => $cnote['cnote_goods_descr'] ?? null,
+                'amount'               => $cnote['cnote_amount'] ?? null,
+                'weight'               => $cnote['cnote_weight'] ?? null,
+                'shipper_name'         => $detail['cnote_shipper_name'] ?? null,
                 'shipper_address'      => $this->concatAddress(
-                                            $response['detail'][0]['cnote_shipper_addr1'] ?? null,
-                                            $response['detail'][0]['cnote_shipper_addr2'] ?? null,
-                                            $response['detail'][0]['cnote_shipper_addr3'] ?? null),
-                'shipper_city'         => $response['detail'][0]['cnote_shipper_city'] ?? null,
-                'receiver_name'        => $response['detail'][0]['cnote_receiver_name'] ?? null,
+                                            $detail['cnote_shipper_addr1'] ?? null,
+                                            $detail['cnote_shipper_addr2'] ?? null,
+                                            $detail['cnote_shipper_addr3'] ?? null),
+                'shipper_city'         => $detail['cnote_shipper_city'] ?? null,
+                'receiver_name'        => $detail['cnote_receiver_name'] ?? null,
                 'receiver_address'     => $this->concatAddress(
-                                            $response['detail'][0]['cnote_receiver_addr1'] ?? null,
-                                            $response['detail'][0]['cnote_receiver_addr2'] ?? null,
-                                            $response['detail'][0]['cnote_receiver_addr3'] ?? null),
-                'receiver_city'        => $response['detail'][0]['cnote_receiver_city'] ?? null,
+                                            $detail['cnote_receiver_addr1'] ?? null,
+                                            $detail['cnote_receiver_addr2'] ?? null,
+                                            $detail['cnote_receiver_addr3'] ?? null),
+                'receiver_city'        => $detail['cnote_receiver_city'] ?? null,
             ];
 
-            Log::info("🔍 DetailInfo Data Before Save", $data);
-            $tracking->detailInfo()->updateOrCreate([], $data);
+            Log::info("🔍 DetailInfo Data Before Save", $detailData);
+            $tracking->detailInfo()->updateOrCreate([], $detailData);
 
+            // 🔁 Sync Histories
             $tracking->histories()->delete();
-            foreach ($response['history'] ?? [] as $h) {
-                $tracking->histories()->create([
+            $historyRecords = collect($response['history'] ?? [])->map(function ($h) {
+                return [
+                    'awb_tracking_id' => $this->trackingId,
                     'date'        => $this->parseDate($h['date'] ?? null),
-                    'description' => $h['desc'] ?? null, // ubah key-nya ke "description"
+                    'description' => $h['desc'] ?? null,
                     'code'        => $h['code'] ?? null,
-                ]);
+                    'created_at'  => now(),
+                    'updated_at'  => now(),
+                ];
+            })->toArray();
+
+            if (!empty($historyRecords)) {
+                \App\Models\AwbHistory::insert($historyRecords);
             }
 
+            // 🔁 Sync Photo Histories
             $tracking->photoHistories()->delete();
-            foreach ($response['photo_history'] ?? [] as $p) {
-                $tracking->photoHistories()->create([
+            $photoRecords = collect($response['photo_history'] ?? [])->map(function ($p) {
+                return [
+                    'awb_tracking_id' => $this->trackingId,
                     'date'   => $this->parseDate($p['date'] ?? null),
                     'photo1' => $p['photo1'] ?? null,
                     'photo2' => $p['photo2'] ?? null,
                     'photo3' => $p['photo3'] ?? null,
                     'photo4' => $p['photo4'] ?? null,
                     'photo5' => $p['photo5'] ?? null,
-                ]);
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ];
+            })->toArray();
+
+            if (!empty($photoRecords)) {
+                \App\Models\AwbPhotoHistory::insert($photoRecords);
             }
-        } catch (\Exception $e) {
-            Log::error("Gagal fetch AWB {$tracking->awb_number}", ['error' => $e->getMessage()]);
+
+        } catch (\Throwable $e) {
+            Log::error("❌ Gagal fetch AWB {$tracking->awb_number}", [
+                'tracking_id' => $this->trackingId,
+                'error' => $e->getMessage(),
+            ]);
         }
     }
+
 
     protected function fetchFromApi(string $awb): array
     {
@@ -119,7 +142,7 @@ class FetchAwbStatusJob implements ShouldQueue
             throw new \Exception("AWB invalid format: '{$awb}'");
         }
 
-        $response = Http::retry(3, 1000)
+        $response = Http::retry(1, 200)
             ->withHeaders(['Content-Type' => 'application/x-www-form-urlencoded'])
             ->asForm()
             ->post($url, [
