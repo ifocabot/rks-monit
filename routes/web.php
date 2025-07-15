@@ -3,6 +3,7 @@
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AwbUploadController;
+use App\Http\Controllers\DashboardController;
 use App\Jobs\FetchAwbStatusJob;
 use Illuminate\Support\Facades\Log;
 
@@ -10,9 +11,8 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/dashboard', function () {
-    return view('pages.dashboard.index');
-})->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard.index');
+Route::post('/awb/sync-status', [AwbUploadController::class, 'syncStatus'])->name('awb.syncStatus');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

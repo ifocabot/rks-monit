@@ -9,113 +9,29 @@
                     </div>
                     <!-- Menu Sidebar -->
                     <div class="flex flex-col gap-2 m-2 overflow-y-auto flex-1 pr-2 scrollbar-gutter-stable">
+
                         <ul
                             class="menu rounded-box w-full text-base-content [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:bg-base-300 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-track]:bg-transparent hover:[&::-webkit-scrollbar-thumb]:bg-base-content/20 transition-colors duration-200">
-                            <li class="menu-title">ERP Menu</li>
+                            <li class="menu-title">Menu</li>
+                            <li>
+                                <a>
+                                    <i data-lucide="layout-dashboard" class="w-4 h-4 mr-2"></i>
+                                    Dashboard
+                                </a>
+                            </li>
                             <!-- Purchase Module -->
                             <li>
                                 <details open>
                                     <summary>
-                                        <i data-lucide="shopping-cart" class="w-4 h-4 mr-2"></i>
-                                        Purchase
+                                        <i data-lucide="package" class="w-4 h-4 mr-2"></i>
+                                        Monitoring
                                     </summary>
                                     <ul>
-                                        <li><a><i data-lucide="file-text" class="w-4 h-4 mr-2"></i>Purchase Order</a>
+                                        <li><a><i data-lucide="list" class="w-4 h-4 mr-2"></i>Daftar Paket</a>
                                         </li>
-                                        <li><a><i data-lucide="clipboard-check" class="w-4 h-4 mr-2"></i>Vendor Bill</a>
+                                        <li><a><i data-lucide="activity" class="w-4 h-4 mr-2"></i>Progress</a>
                                         </li>
-                                        <li><a><i data-lucide="users" class="w-4 h-4 mr-2"></i>Suppliers</a></li>
-                                    </ul>
-                                </details>
-                            </li>
-                            <!-- Inventory Module -->
-                            <li>
-                                <details>
-                                    <summary>
-                                        <i data-lucide="box" class="w-4 h-4 mr-2"></i>
-                                        Inventory
-                                    </summary>
-                                    <ul>
-                                        <li><a><i data-lucide="package" class="w-4 h-4 mr-2"></i>Stock Items</a></li>
-                                        <li><a><i data-lucide="truck" class="w-4 h-4 mr-2"></i>Incoming Shipments</a>
-                                        </li>
-                                        <li><a><i data-lucide="archive" class="w-4 h-4 mr-2"></i>Warehouses</a></li>
-                                    </ul>
-                                </details>
-                            </li>
-                            <!-- Sales Module -->
-                            <li>
-                                <details>
-                                    <summary>
-                                        <i data-lucide="dollar-sign" class="w-4 h-4 mr-2"></i>
-                                        Sales
-                                    </summary>
-                                    <ul>
-                                        <li><a><i data-lucide="file-text" class="w-4 h-4 mr-2"></i>Sales Order</a></li>
-                                        <li><a><i data-lucide="credit-card" class="w-4 h-4 mr-2"></i>Invoice</a></li>
-                                        <li><a><i data-lucide="user-check" class="w-4 h-4 mr-2"></i>Customers</a></li>
-                                    </ul>
-                                </details>
-                            </li>
-                            <!-- Accounting Module -->
-                            <li>
-                                <details>
-                                    <summary>
-                                        <i data-lucide="file-chart" class="w-4 h-4 mr-2"></i>
-                                        Accounting
-                                    </summary>
-                                    <ul>
-                                        <li><a><i data-lucide="dollar-sign" class="w-4 h-4 mr-2"></i>Journal Entries</a>
-                                        </li>
-                                        <li><a><i data-lucide="calendar" class="w-4 h-4 mr-2"></i>Fiscal Period</a></li>
-                                        <li><a><i data-lucide="bar-chart" class="w-4 h-4 mr-2"></i>Reports</a></li>
-                                    </ul>
-                                </details>
-                            </li>
-
-                            <!-- HR Module -->
-                            <li>
-                                <details>
-                                    <summary>
-                                        <i data-lucide="briefcase" class="w-4 h-4 mr-2"></i>
-                                        HR
-                                    </summary>
-                                    <ul>
-                                        <li><a><i data-lucide="user" class="w-4 h-4 mr-2"></i>Employees</a></li>
-                                        <li><a><i data-lucide="calendar-check" class="w-4 h-4 mr-2"></i>Attendance</a>
-                                        </li>
-                                        <li><a><i data-lucide="file" class="w-4 h-4 mr-2"></i>Payslips</a></li>
-                                    </ul>
-                                </details>
-                            </li>
-                            <!-- Additional HR Modules removed for brevity -->
-                            <!-- HR Module -->
-                            <li>
-                                <details>
-                                    <summary>
-                                        <i data-lucide="briefcase" class="w-4 h-4 mr-2"></i>
-                                        HR
-                                    </summary>
-                                    <ul>
-                                        <li><a><i data-lucide="user" class="w-4 h-4 mr-2"></i>Employees</a></li>
-                                        <li><a><i data-lucide="calendar-check" class="w-4 h-4 mr-2"></i>Attendance</a>
-                                        </li>
-                                        <li><a><i data-lucide="file" class="w-4 h-4 mr-2"></i>Payslips</a></li>
-                                    </ul>
-                                </details>
-                            </li>
-                            <!-- HR Module -->
-                            <li>
-                                <details>
-                                    <summary>
-                                        <i data-lucide="briefcase" class="w-4 h-4 mr-2"></i>
-                                        HR
-                                    </summary>
-                                    <ul>
-                                        <li><a><i data-lucide="user" class="w-4 h-4 mr-2"></i>Employees</a></li>
-                                        <li><a><i data-lucide="calendar-check" class="w-4 h-4 mr-2"></i>Attendance</a>
-                                        </li>
-                                        <li><a><i data-lucide="file" class="w-4 h-4 mr-2"></i>Payslips</a></li>
+                                        <li><a><i data-lucide="file-bar-chart" class="w-4 h-4 mr-2"></i>Laporan</a></li>
                                     </ul>
                                 </details>
                             </li>

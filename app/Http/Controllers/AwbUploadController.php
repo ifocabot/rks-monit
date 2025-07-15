@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Imports\AwbImport;
 use App\Models\UploadBatch;
 use Maatwebsite\Excel\Facades\Excel;
+use Illuminate\Support\Facades\Artisan;
 
 class AwbUploadController extends Controller
 {    
@@ -36,4 +37,12 @@ class AwbUploadController extends Controller
         return back()->with('success', 'File sedang diproses.');
     }
 
+    public function syncStatus(Request $request)
+    {
+        Artisan::call('awb:fetch-status', [
+            '--rate' => 30
+        ]);
+
+        return redirect()->back()->with('success', 'Sinkronisasi status AWB sedang diproses.');
+    }
 }

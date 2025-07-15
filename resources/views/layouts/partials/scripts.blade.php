@@ -1,5 +1,5 @@
 <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
-
+<script src="https://unpkg.com/alpinejs" defer></script>
 <script>
     const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
     document.documentElement.style.setProperty('--scrollbar-width', `${scrollbarWidth}px`);

@@ -6,6 +6,29 @@
 </head>
 
 <body>
+    @if (session('success'))
+        <div class="toast">
+            <div class="alert alert-info">
+                <span>{{ session('success') }}</span>
+            </div>
+        </div>
+    @endif
+
+    @if (session('error'))
+        <div class="toast">
+            <div class="alert alert-error">
+                <span>{{ session('error') }}</span>
+            </div>
+        </div>
+    @endif
+
+    @if (session('warning'))
+        <div class="toast">
+            <div class="alert alert-warning">
+                <span>{{ session('warning') }}</span>
+            </div>
+        </div>
+    @endif
     <div class="flex h-screen">
         @include('layouts.partials.sidebar')
 
@@ -13,7 +36,7 @@
             @include('layouts.partials.header')
 
             <main class="flex-1 p-6 bg-base-200">
-                @include('layouts.partials.breadcumbs')
+
                 @yield('content')
             </main>
 

@@ -1,21 +1,38 @@
-<div class="container">
-    <h2>Upload Nomor Resi (AWB)</h2>
+    <!-- Modal trigger button -->
+    <button class="btn btn-primary btn-sm" onclick="upload_modal.showModal()">
+        <i data-lucide="upload"></i>
+        Upload AWB
+    </button>
 
-    @if (session('success'))
-        <div class="alert alert-success">{{ session('success') }}</div>
-    @endif
+    <!-- DaisyUI Modal -->
+    <dialog id="upload_modal" class="modal">
+        <div class="modal-box">
+            <h3 class="font-bold text-lg">Upload Nomor Resi (AWB)</h3>
 
-    <form method="POST" action="{{ route('awb.upload.submit') }}" enctype="multipart/form-data">
-        @csrf
+            @if (session('success'))
+                <div class="alert alert-success">{{ session('success') }}</div>
+            @endif
 
-        <div class="mb-3">
-            <label for="file" class="form-label">Pilih File Excel (AWB)</label>
-            <input type="file" name="file" id="file" class="form-control" required>
-            @error('file')
-                <small class="text-danger">{{ $message }}</small>
-            @enderror
+            <form method="POST" action="{{ route('awb.upload.submit') }}" enctype="multipart/form-data">
+                @csrf
+
+                <div class="form-control w-full">
+                    <label class="label">
+                        <span class="label-text">Pilih File Excel (AWB)</span>
+                    </label>
+                    <input type="file" name="file" id="file" class="file-input file-input-bordered w-full"
+                        required>
+                    @error('file')
+                        <label class="label">
+                            <span class="label-text-alt text-error">{{ $message }}</span>
+                        </label>
+                    @enderror
+                </div>
+
+                <div class="modal-action">
+                    <button type="submit" class="btn btn-primary">Upload</button>
+                    <button type="button" class="btn" onclick="upload_modal.close()">Close</button>
+                </div>
+            </form>
         </div>
-
-        <button type="submit" class="btn btn-primary">Upload</button>
-    </form>
-</div>
+    </dialog>
