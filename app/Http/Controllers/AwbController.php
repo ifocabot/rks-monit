@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\AwbTracking;
+use App\Models\DeliveryStatus;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -10,30 +11,51 @@ class AwbController extends Controller
 {
     public function index(Request $request)
     {
-        $query = AwbTracking::query();
+        $status_code = DeliveryStatus::orderBy('code')->get();
 
-        // Filter by status_code
-        if ($request->filled('code')) {
-            $query->where('status_code', $request->code);
-        }
+        $query = AwbTracking::query()
+            ->with(['user', 'batch', 'detailInfo', 'histories']);
 
-        // Filter by dashboard category (join ke delivery_statuses)
-        if ($request->filled('dashboard_category')) {
-            $query->whereHas('deliveryStatus', function ($q) use ($request) {
-                $q->where('dashboard_category', $request->dashboard_category);
+        // Handle search/filter
+        if ($request->has('search')) {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('awb_number', 'like', "%{$search}%")
+                  ->orWhere('status_label', 'like', "%{$search}%")
+                  ->orWhereHas('detailInfo', function($q) use ($search) {
+                      $q->where('origin', 'like', "%{$search}%")
+                        ->orWhere('destination', 'like', "%{$search}%");
+                  })
+                  ->orWhereHas('user', function($q) use ($search) {
+                      $q->where('name', 'like', "%{$search}%");
+                  })
+                  ->orWhereHas('batch', function($q) use ($search) {
+                      $q->where('batch_id', 'like', "%{$search}%");
+                  });
             });
         }
 
-        // Eager load relasi deliveryStatus
-        $awbs = $query->with('deliveryStatus')
-            ->orderByDesc('created_at')
-            ->paginate(50);
+        // Handle status code filters
+        if ($request->has('status_codes')) {
+            $statusCodes = (array) $request->status_codes;
+            $query->whereIn('status_code', $statusCodes);
+        }
 
-        // Ambil list kategori unik dari tabel referensi
-        $availableCategories = DB::table('delivery_statuses')
-            ->distinct()
-            ->pluck('dashboard_category');
+        if ($request->has('completed')) {
+            $query->where('is_completed', $request->completed === '1');
+        }
 
-        return view('pages.awb.index', compact('awbs', 'availableCategories'));
+        // Handle column sorting
+        $sortColumn = $request->get('sort', 'last_checked_at');
+        $sortDirection = $request->get('direction', 'desc');
+        $query->orderBy($sortColumn, $sortDirection);
+
+        // Get paginated results with relationships
+        $awb = $query->paginate($request->get('per_page', 10));
+
+        // Pass all parameters to view for maintaining state
+        $awb->appends($request->all());
+
+        return view('pages.awb.index', compact('awb','status_code'));
     }
 }

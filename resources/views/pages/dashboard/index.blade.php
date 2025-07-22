@@ -73,7 +73,15 @@
         <!-- RINGKASAN STATUS -->
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
             @foreach ($summary as $item)
-                <div class="card shadow-md bg-base-100">
+                @php
+                    $statusCodesArray = explode(',', $item->status_codes); // misalnya ['D01', 'D02', 'D03']
+                    $queryString = http_build_query([
+                        'status_codes' => $statusCodesArray,
+                    ]);
+                @endphp
+
+                <a href="{{ url('/awb/table') . '?' . $queryString }}"
+                    class="card shadow-md bg-base-100 hover:bg-base-200 transition-colors cursor-pointer">
                     <div class="card-body">
                         <h2 class="text-sm font-medium text-gray-500">{{ $item->dashboard_category }}</h2>
                         <div class="flex items-baseline gap-2">
@@ -84,8 +92,9 @@
                             <div class="bg-info h-1.5 rounded-full" style="width: {{ $item->percentage }}%"></div>
                         </div>
                     </div>
-                </div>
+                </a>
             @endforeach
+
         </div>
         <!-- BATCH TABLE PREVIEW (LIVE FROM upload_batches) -->
         <div class="mt-8">

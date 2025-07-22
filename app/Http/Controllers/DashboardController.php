@@ -38,8 +38,12 @@ class DashboardController extends Controller
     
         $summary = (clone $baseQuery)
             ->join('delivery_statuses as d', 'awb_trackings.status_code', '=', 'd.code')
-            ->select('d.dashboard_category', DB::raw('count(*) as total'),
-                DB::raw('ROUND(count(*) * 100.0 / ' . ($total_all ?: 1) . ', 2) as percentage'))
+            ->select(
+                'd.dashboard_category',
+                DB::raw('GROUP_CONCAT(DISTINCT d.code) as status_codes'),
+                DB::raw('COUNT(*) as total'),
+                DB::raw('ROUND(COUNT(*) * 100.0 / ' . ($total_all ?: 1) . ', 2) as percentage')
+            )
             ->groupBy('d.dashboard_category')
             ->orderByDesc('total')
             ->get();

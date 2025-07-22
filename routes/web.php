@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AwbController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AwbUploadController;
@@ -13,6 +14,7 @@ Route::get('/', function () {
 
 Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard.index');
 Route::post('/awb/sync-status', [AwbUploadController::class, 'syncStatus'])->name('awb.syncStatus');
+route::get('/awb/table',[AwbController::class,'index'])->name('awb.table');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -40,11 +42,5 @@ Route::get('/test-awb', function () {
         return "Failed: " . $e->getMessage();
     }
 });
-
-route::get('/test', function () {
-    return view ('pages.dashboard.index');
-});
-
-
 
 require __DIR__.'/auth.php';
